@@ -7,7 +7,6 @@ public class Alien {
 	private static int swarmLen;
 	private int xPos; //Variables used to keep track of individual aliens relative to the horde
 	private int yPos;
-	//private Rect hurtbox;
 	
 	public static final int RIGHT = 1;
 	public static final int LEFT = -1;
@@ -19,7 +18,7 @@ public class Alien {
 		//Constructor method, sets a specified position and starting direction for all aliens
 		xPos = x;
 		yPos = y;
-		//Rect hurtbox = new Rect(xPos, yPos, ALIENLENGTH, ALIENHEIGHT);
+		
 		
 		if(xPos > swarmX + swarmLen + ALIENLENGTH) {
 			//Adjusting the last pixel that the alien swarm occupies if a new alien is placed farther to the right than any other
@@ -64,6 +63,7 @@ public class Alien {
 	}
 	
 	/*public Rect getHurtbox(){
+	 	Rect hurtbox = new Rect(xPos, yPos, ALIENLENGTH, ALIENHEIGHT);
 	  	return hurtbox;
 	 */
 	
