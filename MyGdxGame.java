@@ -21,7 +21,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 
-		shipPic = new Texture("badlogic.jpg");
+		shipPic = new Texture("_invaderIMG7.png");
 		Ship mainShip = new Ship();
 		shipSprite = new Sprite(shipPic);				// create a Sprite from your shipPic texture
 		shipSprite.setPosition(Gdx.graphics.getWidth()/2, 10);				// set initial position
