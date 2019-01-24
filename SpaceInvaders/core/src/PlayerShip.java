@@ -1,34 +1,36 @@
-//Creates, moves, an acts out player ship actions based on input received in SpaceInvaders.java
-public class PlayerShip {
-	private int x;
-	private int y;
-	
-	
-	public static final int SPEED = 5;
-	public static final int RIGHT = 1;
-	public static final int LEFT = -1;
-	public static final int SHIPLEN = 20;
-	public static final int SHIPHEIGHT = 20;
-	
-	public PlayerShip(int xPos, int yPos) {
-		//Constructor class for the ship to determine it's initial position
-		x = xPos;
-		y = yPos;
-	}
-	
-	public void move(int dir) {
-		//Moves the player left or right based on input taken from SpaceInvaders.java
-		x += SPEED * dir;
-	}
-	
-	public Bullet shoot() {
-		//Creates a Bullet object belonging to the player and shoots it from their location
-		Bullet shot = new Bullet(Bullet.UP, x + SHIPLEN / 2, y);
-		return shot;
-	}
-	
-	/*public Rect hurtbox(){
-	 	Rect hurtbox = new Rect(x, y, SHIPLEN, SHIPHEIGHT);
-	 	return hurtbox;
-	 */
+package com.mygdx.game;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+
+
+public class Ship {
+
+    public Sprite shipSprite;
+
+    public static final int SPEED = 5;
+    public static final int RIGHT = 1;
+    public static final int LEFT = -1;
+
+    public Ship(){
+
+    }
+
+    public static void move(Sprite sprite) {
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && sprite.getX()+sprite.getWidth() < Gdx.graphics.getWidth()){
+            sprite.translateX(SPEED * RIGHT);
+        }
+
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && sprite.getX() > 0) {
+            sprite.translateX(SPEED * LEFT);
+        }
+    }
+
+    public Bullet shoot() {
+        //Creates a Bullet object belonging to the player and shoots it from their location
+        Bullet shot = new Bullet(Bullet.UP, shipSprite.getX() + shipSprite.getWidth() / 2, shipSprite.getY());
+        return shot;
+    }
 }
