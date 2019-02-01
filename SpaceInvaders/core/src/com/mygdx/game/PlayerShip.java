@@ -25,18 +25,21 @@ public class PlayerShip {
 	
 	public void move() {
 		//Moves the player left or right based on input taken from SpaceInvaders.java
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && shipSprite.getX() + shipSprite.getWidth() < Gdx.graphics.getWidth()) {
 			shipSprite.translateX(SPEED * RIGHT);
-		} else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+		} else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && shipSprite.getX() > 0) {
 			shipSprite.translateX(SPEED * LEFT);
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			shoot();
 		}
 	}
 	
-	//public Bullet shoot() {
+	public Bullet shoot() {
 		//Creates a Bullet object belonging to the player and shoots it from their location
-		//Bullet shot = new Bullet(Bullet.UP, x + SHIPLEN / 2, y);
-		//return shot;
-	//}
+		Bullet shot = new Bullet(Bullet.UP, shipSprite.getX() + shipSprite.getWidth() / 2, shipSprite.getY());
+		return shot;
+	}
 	
 	public Sprite getSprite() {
 		return shipSprite;
