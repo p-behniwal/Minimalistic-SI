@@ -16,8 +16,8 @@ public class SpaceInvaders extends ApplicationAdapter {
 	Texture img;
 	ArrayList<Alien> swarm = new ArrayList<Alien>();
 	PlayerShip player;
-	int screenX = 1024;
-	int screenY = 768;
+	int screenX;
+	int screenY;
 	ArrayList<Bullet> bullets;
 	Texture projectile;
 	Sprite shipSprite;
@@ -33,10 +33,14 @@ public class SpaceInvaders extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		
+		screenX = Gdx.graphics.getWidth();
+		screenY = Gdx.graphics.getHeight();
 		Gdx.graphics.setWindowedMode(screenX, screenY);
 		for(int x = 100; x < screenX - 100; x += 40) {
 			for(int y = 100; y < 300; y += 40) {
 				Alien tempAlien = new Alien(x, y, Alien.CIVILIAN);
+				Sprite e = tempAlien.getSprite();
 				swarm.add(tempAlien);
 			}
 		}
@@ -49,25 +53,20 @@ public class SpaceInvaders extends ApplicationAdapter {
 	@Override
 	public void render () {
 		batch.begin();
-		Alien.move(screenX);
-		if(Alien.pastY(screenX - 200)) {
-			gameOver();
-		}
-		/*for(int i = 0; i < swarm.size(); i++) {
-			if(randint(0, 8) > swarm.get(i).getSpecies()) {
-				bullets.add(swarm.get(i).shoot());
+		for(int i = 0; i < swarm.size(); i++) {
+			swarm.get(i).getSprite().draw(batch);
+			swarm.get(i).move(screenX);
+			if(swarm.get(i).pastY(screenX - 200)) {
+				gameOver();
 			}
-		}*/
+		}
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		shipSprite.draw(batch);
-		
 		player.move();
-
-//		else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) shoot();
-
+		
 		batch.end();
 		
 		
