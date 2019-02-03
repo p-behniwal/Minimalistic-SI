@@ -13,7 +13,6 @@ import java.util.*;
 
 public class SpaceInvaders extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture img;
 	ArrayList<Alien> swarm = new ArrayList<Alien>();
 	PlayerShip player;
 	int screenX;
@@ -21,31 +20,39 @@ public class SpaceInvaders extends ApplicationAdapter {
 	ArrayList<Bullet> bullets;
 	Texture projectile;
 	Sprite shipSprite;
-
+	Alien tempAlien;
+	Alien tempAlien2;
+	Music music;
 	
 	
 	
 	
-	//Music music = Gdx.audio.newMusic(Gdx.files.internal("battle.mp3"));
 	//Sound playerLaser = Gdx.audio.newSound(Gdx.files.internal("laser.wav")); 
 	BitmapFont font;
+	int score = 0;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		
 		screenX = Gdx.graphics.getWidth();
 		screenY = Gdx.graphics.getHeight();
-		Gdx.graphics.setWindowedMode(screenX, screenY);
-		for(int x = 100; x < screenX - 100; x += 40) {
-			for(int y = 100; y < 300; y += 40) {
-				Alien tempAlien = new Alien(x, y, Alien.CIVILIAN);
-				Sprite e = tempAlien.getSprite();
+		
+		font = new BitmapFont(); 
+		font.getData().setScale(2f); 
+		
+		/*for(int x = 0; x < 10; x++) {
+			for(int y = 0; y < 5; y++) {
+				Alien tempAlien = new Alien(x * 20, screenY - y * 20, y);
 				swarm.add(tempAlien);
 			}
-		}
+		}*/
+		music = Gdx.audio.newMusic(Gdx.files.internal("ArcadeLoop.mp3"));
+		music.play();
+		music.setLooping(true);
+		tempAlien = new Alien(20, screenY - 80, 3);
+		tempAlien2 = new Alien(100, screenY - 80, 1);
+		
 		player = new PlayerShip();
-		shipSprite = player.getSprite();
 		
 		
 	}
@@ -53,18 +60,24 @@ public class SpaceInvaders extends ApplicationAdapter {
 	@Override
 	public void render () {
 		batch.begin();
-		for(int i = 0; i < swarm.size(); i++) {
+		/*for(int i = 0; i < swarm.size(); i++) {
+			System.out.println(swarm.get(i).getSprite().getX() + " " + swarm.get(i).getSprite().getY());
 			swarm.get(i).getSprite().draw(batch);
-			swarm.get(i).move(screenX);
-			if(swarm.get(i).pastY(screenX - 200)) {
+			swarm.get(i).move();
+			if(swarm.get(i).pastY(10)) {
 				gameOver();
 			}
-		}
+		}*/
 		
+		tempAlien.getSprite().draw(batch);
+		tempAlien.move();
+		tempAlien2.getSprite().draw(batch);
+		tempAlien2.move();	
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		shipSprite.draw(batch);
+		
+		font.draw(batch, "Score: " + score, screenX - 200, screenY - 20); 
+		player.getSprite().draw(batch);
 		player.move();
 		
 		batch.end();
@@ -80,7 +93,7 @@ public class SpaceInvaders extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
+		music.dispose();
 	}
 	
 	public void gameOver() {

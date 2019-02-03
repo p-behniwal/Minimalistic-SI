@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
@@ -13,7 +14,7 @@ public class Alien {
 	
 	public static final int RIGHT = 1;
 	public static final int LEFT = -1;
-	public static final int MOVESPEED = 2;
+	public static final int MOVESPEED = 5;
 	
 	//Different alien species that determine shot frequency
 	public static final int AGGRO = 4;
@@ -27,26 +28,25 @@ public class Alien {
 		//Constructor method, sets a specified position and starting direction for all aliens
 		species = type;
 		
-		//String alienImage = String.format("alien%f.jpg", species);
-		alienTex = new Texture("badlogic.jpg");
+		String alienImage = String.format("alien%d.png", type);
+		alienTex = new Texture(alienImage);
 		alienSprite = new Sprite(alienTex);
 		alienSprite.setPosition(x, y);
-		alienSprite.setSize(10, 10);
 		
 		moveDir = RIGHT;
 	}
 	
-	public void move(int screenLen) {
+	public void move() {
 		//Moves the swarm of aliens
-		if(alienSprite.getX() + alienSprite.getWidth() + MOVESPEED * moveDir >= screenLen || alienSprite.getX() + MOVESPEED * moveDir < 0) {
+		if(alienSprite.getX() + alienSprite.getWidth() + MOVESPEED * moveDir>= Gdx.graphics.getWidth() || alienSprite.getX() + MOVESPEED * moveDir < 0) {
+			alienSprite.translateY(-5);
 			changeDir();
 		}
 		alienSprite.translateX(MOVESPEED * moveDir);
 	}
 	
-	public void changeDir() {
+	public static void changeDir() {
 		//Changes the direction of all the aliens and moves them down
-		alienSprite.translateY(5);
 		moveDir *= -1;
 	}
 
@@ -65,7 +65,7 @@ public class Alien {
 	
 	public boolean pastY(int yPos) {
 		boolean past = false;
-		if(alienSprite.getY() > yPos) {
+		if(alienSprite.getY() < yPos) {
 			past = true;
 		}
 		return past;
