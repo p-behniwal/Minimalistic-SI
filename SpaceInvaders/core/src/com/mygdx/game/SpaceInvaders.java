@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Input;
 
+import java.util.ArrayList;
+
 import static com.mygdx.game.Ship.SPEED;
 
 public class SpaceInvaders extends ApplicationAdapter {
@@ -16,21 +18,19 @@ public class SpaceInvaders extends ApplicationAdapter {
 	Texture bulletImg;
 	Sprite shipSprite;
 	Sprite bulletSprite;
+	Ship mainShip;
+	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+
 	//screen x and y
 
-	
+	int playerCooldown = 60;
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 
-        Ship mainShip = new Ship();
-		shipPic = new Texture("_invaderIMG7.png");
-		shipSprite = new Sprite(shipPic);				// create a Sprite from your shipPic texture
-		shipSprite.setPosition(Gdx.graphics.getWidth()/2, 10);				// set initial position
+        mainShip = new Ship();
 
-        bulletImg = new Texture("_invaderIMG6.png");
-        bulletSprite = new Sprite(bulletImg);
-        bulletSprite.setPosition(shipSprite.getX()+shipSprite.getWidth()/2,shipSprite.getY());
+
 
 //        bulletSprite = new Sprite(projectile);
 
@@ -45,17 +45,35 @@ public class SpaceInvaders extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		System.out.println(shipSprite.getX() + ", " + shipSprite.getY());
+//		System.out.println(shipSprite.getX() + ", " + shipSprite.getY());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		mainShip.move();
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && bullets.size() < 2 && playerCooldown >= 40){
+		    playerCooldown = 0;
+            Bullet playerBullet = mainShip.shoot();
+			bullets.add(playerBullet);
+		}
+        playerCooldown++;
+		for(int i = 0; i < bullets.size(); i++){
+            bullets.get(i).move();
+
+			if(bullets.get(i).getSprite().getY() > Gdx.graphics.getHeight()){
+				bullets.remove(i);
+			}
+		}
 
 
 		batch.begin();
-		shipSprite.draw(batch);
-		Ship.move(shipSprite);
+		mainShip.getSprite().draw(batch);
 
-//		else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) shoot();
+		for(int i = 0; i < bullets.size(); i++){
+			bullets.get(i).getSprite().draw(batch);
+		}
+
+
+
 
 		batch.end();
 	}
@@ -63,6 +81,6 @@ public class SpaceInvaders extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		shipPic.dispose();
+		mainShip.getTexture().dispose();
 	}
 }

@@ -1,4 +1,6 @@
+//Class file for the creating, moving, killing, and acting for the alien enemies in Space Invaders
 package com.mygdx.game;
+import com.mygdx.game.Bullet;
 
 public class Alien {
     private static int moveDir;
@@ -30,12 +32,13 @@ public class Alien {
         }
         moveDir = RIGHT;
     }
+
     public static void move(int screenLen) {
         //Moves the swarm of aliens
         if(swarmX + swarmLen + MOVESPEED * moveDir >= screenLen || swarmX + MOVESPEED * moveDir < 0) {
             changeDir();
         }
-        swarmX += MOVESPEED*moveDir;
+        swarmX += MOVESPEED * moveDir;
     }
 
     public static void changeDir() {
@@ -60,7 +63,8 @@ public class Alien {
     public int getY() {
         return swarmY + yPos;
     }
-    /*public Rect getHurtbox(){
+	
+	/*public Rect getHurtbox(){
 	 	Rect hurtbox = new Rect(xPos, yPos, ALIENLENGTH, ALIENHEIGHT);
 	  	return hurtbox;
 	 */
