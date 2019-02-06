@@ -17,8 +17,8 @@ public class PlayerShip {
 	
 	public PlayerShip() {
 		//Constructor class for the ship to determine it's initial position
-		shipPic = new Texture("badlogic.jpg");
-		shipSprite = new Sprite(shipPic);				// create a Sprite from your shipPic texture
+		shipPic = new Texture("playerShip.png");
+		shipSprite = new Sprite(shipPic);				// create a Sprite from the shipPic texture
 		shipSprite.setPosition(Gdx.graphics.getWidth()/2, 10);				// set initial position
 		
 	}
