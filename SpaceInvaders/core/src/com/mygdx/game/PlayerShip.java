@@ -36,10 +36,10 @@ public class PlayerShip {
 	}
 	
 	public Bullet shoot() {
-		//Creates a Bullet object belonging to the player and shoots it from their location
-		Bullet shot = new Bullet(Bullet.UP, shipSprite.getX() + shipSprite.getWidth() / 2, shipSprite.getY());
-		return shot;
-	}
+        //Creates a Bullet object belonging to the player and shoots it from their location
+        Bullet bullet = new Bullet(Bullet.UP,shipSprite.getX(),shipSprite.getY());
+        return bullet;
+    }
 	
 	public Sprite getSprite() {
 		return shipSprite;
