@@ -30,9 +30,6 @@ public class PlayerShip {
 		} else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && shipSprite.getX() > 0) {
 			shipSprite.translateX(SPEED * LEFT);
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			shoot();
-		}
 	}
 	
 	public Bullet shoot() {
