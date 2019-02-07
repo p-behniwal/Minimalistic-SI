@@ -45,7 +45,7 @@ public class SpaceInvaders extends ApplicationAdapter {
 		
 		for(int x = 0; x < 10; x++) {
 			for(int y = 0; y < 5; y++) {
-				Alien tempAlien = new Alien(x * 40, screenY - y * 30 - 55, y);
+				Alien tempAlien = new Alien(x * 40, screenY - y * 30 - 55, 4 - y);
 				swarm.add(tempAlien);
 			}
 		}
@@ -67,6 +67,15 @@ public class SpaceInvaders extends ApplicationAdapter {
 					swarm.get(j).moveDown();
 				}
 			}
+			int[] fireDraws = new int[swarm.get(i).getSpecies()];
+			for(int j = 0; j < swarm.get(i).getSpecies(); j++) {
+				fireDraws[j] = randint(0, 7000);
+			}
+			for(int j : fireDraws) {
+				if(j == 1) {
+					bullets.add(swarm.get(i).shoot());
+				}
+			}
 			if(swarm.get(i).pastY(50)) {
 				gameOver();
 			}
@@ -77,21 +86,43 @@ public class SpaceInvaders extends ApplicationAdapter {
 		
 		player.move(); //Moving the player
 		//Letting the player shoot and create bullets with restrictions
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && bullets.size() < 2 && playerCooldown >= 40){
+		int pBullets = 0;
+		for(int i = 0; i < bullets.size(); i++) {
+			if(bullets.get(i).getDir() == Bullet.UP) {
+				pBullets++;
+			}
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && pBullets < 2 && playerCooldown >= 40){
 		    playerCooldown = 0;
             Bullet playerBullet = player.shoot();
 			bullets.add(playerBullet);
 		}
         playerCooldown++;
         //Moving and removing bullets as necessary
+        ArrayList<Alien> deadAliens = new ArrayList<Alien>();
+        ArrayList<Bullet> usedBullets = new ArrayList<Bullet>();
 		for(int i = 0; i < bullets.size(); i++){
             bullets.get(i).move();
-
-			if(bullets.get(i).getSprite().getY() > Gdx.graphics.getHeight()){
-				bullets.remove(i);
+            for(int j = 0; j < swarm.size(); j++) {
+    			int scoreInc = bullets.get(i).collide(swarm.get(j));
+    			if(scoreInc != 0) {
+    				usedBullets.add(bullets.get(i));
+    				deadAliens.add(swarm.get(j));
+    				score += scoreInc;
+    			}
+            }
+    		if(bullets.get(i).collide(player)) {
+    			usedBullets.add(bullets.get(i));
+    			lives--;
+    		}
+    		
+			if(bullets.get(i).getSprite().getY() > Gdx.graphics.getHeight() || bullets.get(i).getSprite().getY() < 0){
+				usedBullets.add(bullets.get(i));
 			}
 		}
-
+		bullets.removeAll(usedBullets);
+		swarm.removeAll(deadAliens);
+		
 		batch.begin();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
