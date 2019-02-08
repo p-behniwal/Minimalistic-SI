@@ -38,7 +38,6 @@ public class Bullet {
         Rectangle aHurtbox = alien.getSprite().getBoundingRectangle();
         Rectangle bHitbox = bulletSprite.getBoundingRectangle();
         if(bHitbox.overlaps(aHurtbox) && dir == UP) {
-        	System.out.println("duck");
         	scoreIncrease = 100 * (alien.getSpecies() + 1);
         }
         return scoreIncrease;
@@ -53,6 +52,28 @@ public class Bullet {
         	collided = true;
         }
         return collided;
+    }
+    
+    public boolean collide(Ufo bonusAlien) {
+    	boolean collided = false;
+    	Rectangle aHurtbox = bonusAlien.getSprite().getBoundingRectangle();
+        Rectangle bHitbox = bulletSprite.getBoundingRectangle();
+        if(bHitbox.overlaps(aHurtbox) && dir == UP) {
+        	collided = true;
+        }
+        return collided;
+    }
+    
+    public int collide(Shield shield) {
+    	int shieldPos = -1;
+    	Rectangle bHitbox = bulletSprite.getBoundingRectangle();
+    	for(int i = 0; i < shield.getSprites().length; i++) {
+    		Rectangle sHurtbox = shield.getSprites()[i].getBoundingRectangle();
+    		if(bHitbox.overlaps(sHurtbox) && shield.getHealths()[i] != 0) {
+            	shieldPos = i;
+            }
+    	}
+    	return shieldPos;
     }
 
     public float getX() {
