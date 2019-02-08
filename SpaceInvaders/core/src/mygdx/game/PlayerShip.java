@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public class PlayerShip {
 	private Sprite shipSprite;
 	private Texture shipPic;
+	private boolean invin;
 	
 	
 	public static final int SPEED = 5;
@@ -37,6 +38,14 @@ public class PlayerShip {
         Bullet bullet = new Bullet(Bullet.UP,shipSprite.getX(),shipSprite.getY());
         return bullet;
     }
+	
+	public void setInvin(boolean state) {
+		invin = state;
+	}
+	
+	public boolean isInvin() {
+		return invin;
+	}
 	
 	public Sprite getSprite() {
 		return shipSprite;
