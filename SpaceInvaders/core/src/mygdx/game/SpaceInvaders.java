@@ -26,11 +26,14 @@ public class SpaceInvaders extends ApplicationAdapter {
 	Music music;
 	Ufo bonusAlien;
 	ArrayList<Shield> shields = new ArrayList<Shield>();
+	PowerUp power;
+	Sound alienDeath;
+	Sound playerDeath;
 	
 	
 	
 	
-	//Sound playerLaser = Gdx.audio.newSound(Gdx.files.internal("laser.wav")); 
+	
 	BitmapFont font;
 	int score = 0;
 	int lives = 3;
@@ -38,6 +41,8 @@ public class SpaceInvaders extends ApplicationAdapter {
 	int respawnTimer = 0;
 	int invinTimer = 0;
 	int level = 1;
+	int maxBullets = 1;
+	int laserTimer = 0;
 	
 	@Override
 	public void create () {
@@ -54,13 +59,15 @@ public class SpaceInvaders extends ApplicationAdapter {
 				swarm.add(tempAlien);
 			}
 		}
+		playerDeath = Gdx.audio.newSound(Gdx.files.internal("playerDeath.wav"));
+		alienDeath = Gdx.audio.newSound(Gdx.files.internal("alienDeath.wav")); 
 		music = Gdx.audio.newMusic(Gdx.files.internal("ArcadeLoop.mp3"));
 		music.play();
 		music.setLooping(true);
 		
 		player = new PlayerShip();
 		for(int i = 0; i < 3; i++) {
-			Shield tempShield = new Shield(50 + i * 200, 80);
+			Shield tempShield = new Shield(70 + i * 200, 80);
 			shields.add(tempShield);
 		}
 		
@@ -72,6 +79,18 @@ public class SpaceInvaders extends ApplicationAdapter {
 		//Doing appropriate things to work on respawning a dead player
 		if(swarm.isEmpty()) {
 			level++;
+			int randPower = randint(1, 10);
+			int powerType;
+			if(randPower < 5) {
+				powerType = PowerUp.FIREUP;
+			} else if(randPower < 8) {
+				powerType = PowerUp.INVIN;
+			} else if(randPower < 10) {
+				powerType = PowerUp.LASER;
+			} else {
+				powerType = PowerUp.LIFE;
+			}
+			power = new PowerUp(screenX / 2, screenY, powerType);
 			for(int x = 0; x < 10; x++) {
 				for(int y = 0; y < 5; y++) {
 					Alien tempAlien = new Alien(x * 40, screenY - y * 30 - 55, 4 - y);
@@ -86,16 +105,28 @@ public class SpaceInvaders extends ApplicationAdapter {
 			respawnTimer++;
 			if(respawnTimer >= 60) { //respawning the player after 60 frames
 				player = new PlayerShip(); //recreating the player
-				player.setInvin(true); //Making the player invincible for a while on respawn
+				invinTimer = 60; 
 				respawnTimer = 0; //resetting the spawn timer to make future respawns possible
 			}
 		} else { //Doing all player actions only when ensuring the player exists
-			if(player.isInvin()) { //doing appropriate actions to make sure the player isn't invincible forever on respawn
-				invinTimer++;
-				if(invinTimer >= 60) { //Making the player not invincible after 60 frames
-					player.setInvin(false);
-					invinTimer = 0; //Resetting invincibility timer 
+			if(invinTimer > 0) { //doing appropriate actions to make sure the player isn't invincible forever on respawn
+				invinTimer--;
+			}
+			if(power != null) {
+				int powerCollected = player.collect(power);
+				if(powerCollected != 0) {
+					power = null;
+					if(powerCollected == PowerUp.FIREUP) {
+						maxBullets++;
+					} else if(powerCollected == PowerUp.INVIN) {
+						invinTimer = 180;
+					} else if(powerCollected == PowerUp.LASER) {
+						laserTimer = 120;
+					} else if(powerCollected == PowerUp.LIFE) {
+						lives++;
+					}
 				}
+				
 			}
 			player.move(); //Moving the player
 			//Letting the player shoot and create bullets with restrictions
@@ -105,10 +136,13 @@ public class SpaceInvaders extends ApplicationAdapter {
 					pBullets++;
 				}
 			}
-			if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && pBullets < 2 && playerCooldown >= 40){
+			if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && ((pBullets < maxBullets && playerCooldown >= 10) || laserTimer > 0)){
 			    playerCooldown = 0;
 	            Bullet playerBullet = player.shoot();
 				bullets.add(playerBullet);
+				if(laserTimer > 0) {
+					laserTimer--;
+				}
 			}
 		}
 		
@@ -136,7 +170,7 @@ public class SpaceInvaders extends ApplicationAdapter {
 			swarm.get(i).move();
 		}
 		if(bonusAlien == null) {
-			if(randint(0, 18000) == 1) {
+			if(randint(0, 6000) == 1) {
 				bonusAlien = new Ufo(screenY);
 			}
 		} else {
@@ -146,7 +180,12 @@ public class SpaceInvaders extends ApplicationAdapter {
 			}
 		}
 		
-		
+		if(power != null) {
+			power.move();
+			if(power.getSprite().getY() < 0) {
+				power = null;
+			}
+		}
 		
 		
         playerCooldown++;
@@ -160,6 +199,7 @@ public class SpaceInvaders extends ApplicationAdapter {
     			if(scoreInc != 0) {
     				usedBullets.add(bullets.get(i));
     				deadAliens.add(swarm.get(j));
+    				alienDeath.play();
     				score += scoreInc;
     			}
             }
@@ -168,12 +208,29 @@ public class SpaceInvaders extends ApplicationAdapter {
             	if(bullets.get(i).collide(bonusAlien)) {
         			usedBullets.add(bullets.get(i));
         			score += 1000 * level;
+        			int randPower = randint(1, 10);
+        			int powerType;
+        			if(randPower < 5) {
+        				powerType = PowerUp.FIREUP;
+        			} else if(randPower < 8) {
+        				powerType = PowerUp.INVIN;
+        			} else if(randPower < 10) {
+        				powerType = PowerUp.LASER;
+        			} else {
+        				powerType = PowerUp.LIFE;
+        			}
+        			if(power == null) {
+        				power = new PowerUp(bonusAlien.getSprite().getX(), bonusAlien.getSprite().getY(), powerType);
+        			}
+        			
         			bonusAlien = null;
+        			
         		}
             }
             
             if(player != null) {
-            	if(bullets.get(i).collide(player) && !player.isInvin()) {
+            	if(bullets.get(i).collide(player) && invinTimer <= 0) {
+            		playerDeath.play();
         			usedBullets.add(bullets.get(i));
         			lives--;
         			player = null;
@@ -199,9 +256,10 @@ public class SpaceInvaders extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		//Displaying relevant text on screen
-		font.draw(batch, "Highscore: " + "", screenX - 600, screenY - 10);
+		font.draw(batch, "Highscore: " + "", 50, screenY - 10);
 		font.draw(batch, "Score: " + score, screenX - 200, screenY - 10); 
 		font.draw(batch, "Lives: " + lives, screenX - 150, 35);
+		font.draw(batch, "Level: " + level, 50, 35);
 		
 		//Drawing all aliens
 		for(int i = 0; i < swarm.size(); i++) {
@@ -229,6 +287,11 @@ public class SpaceInvaders extends ApplicationAdapter {
 				shields.get(i).getSprites()[j].draw(batch);
 			}
 		}
+		
+		//Drawing powerups
+		if(power != null) {
+        	power.getSprite().draw(batch);
+        }
 		
 		batch.end();
 		

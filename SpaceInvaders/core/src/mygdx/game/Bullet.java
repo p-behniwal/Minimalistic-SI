@@ -14,15 +14,16 @@ public class Bullet {
 
     public static final int DOWN = -1;
     public static final int UP = 1;
-    public static final int SPEED = 5;
+    public static final int SPEED = 8;
 
     public Bullet(int direction, float xPos, float yPos) {
         //Constructor method
         dir = direction;
         x = xPos;
         y = yPos;
-        bulletImg = new Texture("_invaderIMG6.png");
+        bulletImg = new Texture("bullet.png");
         bulletSprite = new Sprite(bulletImg);
+        bulletSprite.setSize(3, 10);
         bulletSprite.setPosition(x,y);
     }
 

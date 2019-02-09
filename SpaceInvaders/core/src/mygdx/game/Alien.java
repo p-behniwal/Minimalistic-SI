@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
@@ -13,9 +14,11 @@ public class Alien {
 	private Sprite alienSprite;
 	private Texture alienTex;
 	
+	private Sound alienLaser = Gdx.audio.newSound(Gdx.files.internal("alienLaser.wav"));
+	
 	public static final int RIGHT = 1;
 	public static final int LEFT = -1;
-	public static final int MOVESPEED = 2;
+	public static final int MOVESPEED = 1;
 	
 	//Different alien species that determine shot frequency
 	public static final int AGGRO = 4;
@@ -59,6 +62,7 @@ public class Alien {
 			
 	
 	public Bullet shoot() {
+		alienLaser.play();
 		Bullet shot = new Bullet(Bullet.DOWN, alienSprite.getX() + alienSprite.getWidth() / 2, alienSprite.getY() + alienSprite.getHeight());
 		return shot;
 	}

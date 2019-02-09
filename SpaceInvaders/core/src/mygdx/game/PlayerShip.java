@@ -2,14 +2,19 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
 
 //Creates, moves, an acts out player ship actions based on input received in SpaceInvaders.java
 public class PlayerShip {
 	private Sprite shipSprite;
 	private Texture shipPic;
-	private boolean invin;
+	
+	
+	private Sound playerLaser = Gdx.audio.newSound(Gdx.files.internal("playerLaser.wav"));
+	private Sound powerUp = Gdx.audio.newSound(Gdx.files.internal("powerup.wav"));
 	
 	
 	public static final int SPEED = 5;
@@ -35,16 +40,20 @@ public class PlayerShip {
 	
 	public Bullet shoot() {
         //Creates a Bullet object belonging to the player and shoots it from their location
-        Bullet bullet = new Bullet(Bullet.UP,shipSprite.getX(),shipSprite.getY());
+		playerLaser.play();
+        Bullet bullet = new Bullet(Bullet.UP, shipSprite.getX() + shipSprite.getWidth() / 2, shipSprite.getY());
         return bullet;
     }
 	
-	public void setInvin(boolean state) {
-		invin = state;
-	}
-	
-	public boolean isInvin() {
-		return invin;
+	public int collect(PowerUp power) {
+		int type = 0;
+        Rectangle plHitbox = shipSprite.getBoundingRectangle();
+        Rectangle poHitbox = power.getSprite().getBoundingRectangle();
+        if(plHitbox.overlaps(poHitbox)) {
+        	type = power.getType();
+        	powerUp.play();
+        }
+        return type;
 	}
 	
 	public Sprite getSprite() {
