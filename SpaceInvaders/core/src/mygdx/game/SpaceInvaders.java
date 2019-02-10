@@ -29,6 +29,8 @@ public class SpaceInvaders extends ApplicationAdapter {
 	PowerUp power;
 	Sound alienDeath;
 	Sound playerDeath;
+	Sound bossDeath;
+	Boss boss;
 	
 	
 	
@@ -61,6 +63,7 @@ public class SpaceInvaders extends ApplicationAdapter {
 		}
 		playerDeath = Gdx.audio.newSound(Gdx.files.internal("playerDeath.wav"));
 		alienDeath = Gdx.audio.newSound(Gdx.files.internal("alienDeath.wav")); 
+		bossDeath = Gdx.audio.newSound(Gdx.files.internal("bossDeath.wav")); 
 		music = Gdx.audio.newMusic(Gdx.files.internal("ArcadeLoop.mp3"));
 		music.play();
 		music.setLooping(true);
@@ -77,7 +80,7 @@ public class SpaceInvaders extends ApplicationAdapter {
 	@Override
 	public void render () {
 		//Doing appropriate things to work on respawning a dead player
-		if(swarm.isEmpty()) {
+		if(swarm.isEmpty() && boss == null) {
 			level++;
 			int randPower = randint(1, 10);
 			int powerType;
@@ -91,10 +94,14 @@ public class SpaceInvaders extends ApplicationAdapter {
 				powerType = PowerUp.LIFE;
 			}
 			power = new PowerUp(screenX / 2, screenY, powerType);
-			for(int x = 0; x < 10; x++) {
-				for(int y = 0; y < 5; y++) {
-					Alien tempAlien = new Alien(x * 40, screenY - y * 30 - 55, 4 - y);
-					swarm.add(tempAlien);
+			if(level % 5 == 0) {
+				boss = new Boss(level, screenY);
+			} else {
+				for(int x = 0; x < 10; x++) {
+					for(int y = 0; y < 5; y++) {
+						Alien tempAlien = new Alien(x * 40, screenY - y * 30 - 55, 4 - y);
+						swarm.add(tempAlien);
+					}
 				}
 			}
 		}
@@ -119,9 +126,9 @@ public class SpaceInvaders extends ApplicationAdapter {
 					if(powerCollected == PowerUp.FIREUP) {
 						maxBullets++;
 					} else if(powerCollected == PowerUp.INVIN) {
-						invinTimer = 180;
+						invinTimer = 300;
 					} else if(powerCollected == PowerUp.LASER) {
-						laserTimer = 120;
+						laserTimer = 60;
 					} else if(powerCollected == PowerUp.LIFE) {
 						lives++;
 					}
@@ -169,6 +176,7 @@ public class SpaceInvaders extends ApplicationAdapter {
 		for(int i = 0; i < swarm.size(); i++) {
 			swarm.get(i).move();
 		}
+		
 		if(bonusAlien == null) {
 			if(randint(0, 6000) == 1) {
 				bonusAlien = new Ufo(screenY);
@@ -177,6 +185,13 @@ public class SpaceInvaders extends ApplicationAdapter {
 			bonusAlien.move();
 			if(bonusAlien.getSprite().getX() > screenX + 30) {
 				bonusAlien = null;
+			}
+		}
+		
+		if(boss != null) {
+			boss.move();
+			if(randint(1, 800 / level) == 1) {
+				bullets.addAll(boss.shoot(level));
 			}
 		}
 		
@@ -228,9 +243,22 @@ public class SpaceInvaders extends ApplicationAdapter {
         		}
             }
             
+            if(boss != null) {
+            	if(bullets.get(i).collide(boss)) {
+            		usedBullets.add(bullets.get(i));
+            		boss.takeDamage(level);
+        			if(boss.isDead()) {
+        				bossDeath.play();
+        				boss = null;
+        			}
+
+            	}
+            }
+            
             if(player != null) {
             	if(bullets.get(i).collide(player) && invinTimer <= 0) {
             		playerDeath.play();
+            		maxBullets = 1;
         			usedBullets.add(bullets.get(i));
         			lives--;
         			player = null;
@@ -269,6 +297,10 @@ public class SpaceInvaders extends ApplicationAdapter {
 		if(bonusAlien != null) {
         	bonusAlien.getSprite().draw(batch);
         }
+		
+		if(boss != null) {
+			boss.getSprite().draw(batch);
+		}
 		
 		//Drawing the player
 		if(player != null && invinTimer % 2 == 0) {

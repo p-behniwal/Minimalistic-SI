@@ -76,6 +76,16 @@ public class Bullet {
     	}
     	return shieldPos;
     }
+    
+    public boolean collide(Boss boss) {
+    	boolean collided = false;
+    	Rectangle boHurtbox = boss.getSprite().getBoundingRectangle();
+        Rectangle bHitbox = bulletSprite.getBoundingRectangle();
+        if(bHitbox.overlaps(boHurtbox) && dir == UP) {
+        	collided = true;
+        }
+        return collided;
+    }
 
     public float getX() {
         return x;
