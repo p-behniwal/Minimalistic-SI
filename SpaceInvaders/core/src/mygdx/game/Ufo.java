@@ -10,6 +10,7 @@ public class Ufo {
 	final public static int MOVESPEED = 2;
 	
 	public Ufo(int screenY) {
+		//Constructor methos for the bonus alien
 		ufoTex = new Texture("ufo.png");
 		ufoSprite = new Sprite(ufoTex);
 		ufoSprite.setPosition(-30, screenY - 40);
@@ -21,6 +22,7 @@ public class Ufo {
 	}
 	
 	public Sprite getSprite() {
+		//Returns the ufo's sprite
 		return ufoSprite;
 	}
 }

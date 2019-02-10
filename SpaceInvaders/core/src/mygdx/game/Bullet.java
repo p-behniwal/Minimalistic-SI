@@ -38,8 +38,8 @@ public class Bullet {
         int scoreIncrease = 0;
         Rectangle aHurtbox = alien.getSprite().getBoundingRectangle();
         Rectangle bHitbox = bulletSprite.getBoundingRectangle();
-        if(bHitbox.overlaps(aHurtbox) && dir == UP) {
-        	scoreIncrease = 100 * (alien.getSpecies() + 1);
+        if(bHitbox.overlaps(aHurtbox) && dir == UP) { //making sure to only check for player bullets
+        	scoreIncrease = 100 * (alien.getSpecies() + 1); //score based on the alien's species
         }
         return scoreIncrease;
     }
@@ -49,28 +49,30 @@ public class Bullet {
         boolean collided = false;
         Rectangle pHurtbox = player.getSprite().getBoundingRectangle();
         Rectangle bHitbox = bulletSprite.getBoundingRectangle();
-        if(dir == DOWN && bHitbox.overlaps(pHurtbox)) {
+        if(dir == DOWN && bHitbox.overlaps(pHurtbox)) { //making sure to only check for alien bullets
         	collided = true;
         }
         return collided;
     }
     
     public boolean collide(Ufo bonusAlien) {
+    	//Checks if this bullet has collided with a bonus alien, if so, returns true
     	boolean collided = false;
     	Rectangle aHurtbox = bonusAlien.getSprite().getBoundingRectangle();
         Rectangle bHitbox = bulletSprite.getBoundingRectangle();
-        if(bHitbox.overlaps(aHurtbox) && dir == UP) {
+        if(bHitbox.overlaps(aHurtbox) && dir == UP) { //making sure to only check for player bullets
         	collided = true;
         }
         return collided;
     }
     
     public int collide(Shield shield) {
+    	//Checks if this bullet has collided with a shield, and if so, returns which piece, if not, returns -1
     	int shieldPos = -1;
     	Rectangle bHitbox = bulletSprite.getBoundingRectangle();
     	for(int i = 0; i < shield.getSprites().length; i++) {
     		Rectangle sHurtbox = shield.getSprites()[i].getBoundingRectangle();
-    		if(bHitbox.overlaps(sHurtbox) && shield.getHealths()[i] != 0) {
+    		if(bHitbox.overlaps(sHurtbox) && shield.getHealths()[i] != 0) { //Making sure the shield is still healthy before collision
             	shieldPos = i;
             }
     	}
@@ -78,27 +80,23 @@ public class Bullet {
     }
     
     public boolean collide(Boss boss) {
+    	//Checking if this bullet collided with a boss, and if so, returns true
     	boolean collided = false;
     	Rectangle boHurtbox = boss.getSprite().getBoundingRectangle();
         Rectangle bHitbox = bulletSprite.getBoundingRectangle();
-        if(bHitbox.overlaps(boHurtbox) && dir == UP) {
+        if(bHitbox.overlaps(boHurtbox) && dir == UP) { //making sure to only check for player bullets
         	collided = true;
         }
         return collided;
     }
 
-    public float getX() {
-        return x;
-    }
-    
     public int getDir() {
+    	//Returns the direction of this bullet
     	return dir;
     }
     
-    public float getY() {
-        return y;
-    }
     public Sprite getSprite() {
+    	//Returns this bullet's sprite
         return bulletSprite;
     }
 }

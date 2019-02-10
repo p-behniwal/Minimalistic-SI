@@ -30,7 +30,7 @@ public class PlayerShip {
 	}
 	
 	public void move() {
-		//Moves the player left or right based on input taken from SpaceInvaders.java
+		//Moves the player left or right based on player input, limited to edges of the screen
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && shipSprite.getX() + shipSprite.getWidth() < Gdx.graphics.getWidth()) {
 			shipSprite.translateX(SPEED * RIGHT);
 		} else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && shipSprite.getX() > 0) {
@@ -40,23 +40,26 @@ public class PlayerShip {
 	
 	public Bullet shoot() {
         //Creates a Bullet object belonging to the player and shoots it from their location
-		playerLaser.play();
+		playerLaser.play(); //Plays the player shot sound effect
         Bullet bullet = new Bullet(Bullet.UP, shipSprite.getX() + shipSprite.getWidth() / 2, shipSprite.getY());
         return bullet;
     }
 	
 	public int collect(PowerUp power) {
+		//Checks if a powerup has been collected, and returns which type it was. Returns 0 if none have been collected
 		int type = 0;
+		//Getting the rectangles for the player and given powerup
         Rectangle plHitbox = shipSprite.getBoundingRectangle();
         Rectangle poHitbox = power.getSprite().getBoundingRectangle();
-        if(plHitbox.overlaps(poHitbox)) {
-        	type = power.getType();
-        	powerUp.play();
+        if(plHitbox.overlaps(poHitbox)) { //Checks if the rectangles collide with each other
+        	type = power.getType(); //Gets the powerup's type
+        	powerUp.play(); //Plays the powerup sound effect
         }
         return type;
 	}
 	
 	public Sprite getSprite() {
+		//Returns the ship's sprite
 		return shipSprite;
 	}
 }

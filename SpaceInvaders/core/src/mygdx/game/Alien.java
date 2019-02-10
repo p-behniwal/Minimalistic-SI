@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public class Alien {
 	private static int moveDir;
 	
-	private int species;
+	private int species; //Used to determine which sprite the alien gets, and how aggressive they are
 	private Sprite alienSprite;
 	private Texture alienTex;
 	
@@ -31,8 +31,7 @@ public class Alien {
 	public Alien(int x, int y, int type) {
 		//Constructor method, sets a specified position and starting direction for all aliens
 		species = type;
-		
-		String alienImage = String.format("alien%d.png", type);
+		String alienImage = String.format("alien%d.png", type); //Choosing a texture based on their species
 		alienTex = new Texture(alienImage);
 		alienSprite = new Sprite(alienTex);
 		alienSprite.setPosition(x, y);
@@ -47,7 +46,7 @@ public class Alien {
 	}
 	
 	public boolean changeDir() {
-		//Changes the direction of all the aliens and moves them down
+		//Changes the direction of all the aliens and determines if they need to all move down
 		boolean moveDown = false;
 		if(alienSprite.getX() + alienSprite.getWidth() + MOVESPEED * moveDir >= Gdx.graphics.getWidth() || alienSprite.getX() + MOVESPEED * moveDir < 0) {
 			moveDir *= -1;
@@ -57,33 +56,34 @@ public class Alien {
 	}
 	
 	public void moveDown() {
+		//Moves the aliens down the screen
 		alienSprite.translateY(-7);
 	}
 			
 	
 	public Bullet shoot() {
-		alienLaser.play();
+		//Returns a bullet from a given alien
+		alienLaser.play(); //Plays the alien shot sound effect
 		Bullet shot = new Bullet(Bullet.DOWN, alienSprite.getX() + alienSprite.getWidth() / 2, alienSprite.getY() + alienSprite.getHeight());
 		return shot;
 	}
 	
 	public int getSpecies() {
+		//Returns which species the alien is
 		return species;
 	}
 	
 	public Sprite getSprite() {
+		//Returns the alien's sprite
 		return alienSprite;
 	}
 	
 	public boolean pastY(int yPos) {
+		//Checks if this alien is past a certain y coordinate
 		boolean past = false;
 		if(alienSprite.getY() < yPos) {
 			past = true;
 		}
 		return past;
-	}
-	
-	public String toString() {
-		return String.format("%.1f %.1f ",alienSprite.getX(),alienSprite.getY());
 	}
 }
