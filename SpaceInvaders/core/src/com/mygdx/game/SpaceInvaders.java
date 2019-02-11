@@ -1,106 +1,95 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import java.util.*;
 
-public class SpaceInvaders extends ApplicationAdapter {
-	SpriteBatch batch;
-	ArrayList<Alien> swarm = new ArrayList<Alien>();
-	PlayerShip player;
-	int screenX;
-	int screenY;
-	ArrayList<Bullet> bullets;
-	Texture projectile;
-	Sprite shipSprite;
-	Alien tempAlien;
-	Alien tempAlien2;
-	Music music;
-	
-	
-	
-	
-	//Sound playerLaser = Gdx.audio.newSound(Gdx.files.internal("laser.wav")); 
-	BitmapFont font;
-	int score = 0;
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		screenX = Gdx.graphics.getWidth();
-		screenY = Gdx.graphics.getHeight();
-		
-		font = new BitmapFont(); 
-		font.getData().setScale(2f); 
-		
-		/*for(int x = 0; x < 10; x++) {
-			for(int y = 0; y < 5; y++) {
-				Alien tempAlien = new Alien(x * 20, screenY - y * 20, y);
-				swarm.add(tempAlien);
-			}
-		}*/
-		music = Gdx.audio.newMusic(Gdx.files.internal("ArcadeLoop.mp3"));
-		music.play();
-		music.setLooping(true);
-		tempAlien = new Alien(20, screenY - 80, 3);
-		tempAlien2 = new Alien(100, screenY - 80, 1);
-		
-		player = new PlayerShip();
-		
-		
-	}
+import java.util.ArrayList;
 
-	@Override
-	public void render () {
-		batch.begin();
-		/*for(int i = 0; i < swarm.size(); i++) {
-			System.out.println(swarm.get(i).getSprite().getX() + " " + swarm.get(i).getSprite().getY());
-			swarm.get(i).getSprite().draw(batch);
-			swarm.get(i).move();
-			if(swarm.get(i).pastY(10)) {
-				gameOver();
-			}
-		}*/
-		
-		tempAlien.getSprite().draw(batch);
-		tempAlien.move();
-		tempAlien2.getSprite().draw(batch);
-		tempAlien2.move();	
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		font.draw(batch, "Score: " + score, screenX - 200, screenY - 20); 
-		player.getSprite().draw(batch);
-		player.move();
-		
-		batch.end();
-		
-		
-		
-		
-		
-		
-		
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		music.dispose();
-	}
-	
-	public void gameOver() {
-		Gdx.app.exit();
-	}
-	
-	public static int randint(int low, int high){ 
-		return (int)(Math.random()*(high-low+1) + low); 
-	}
+
+public class SpaceInvaders extends Game {
+
+    SpriteBatch batch;
+    ArrayList<Alien> swarm = new ArrayList<Alien>();
+    PlayerShip player;
+    int screenX;
+    int screenY;
+    ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+    Texture projectile;
+    Sprite shipSprite;
+    Alien tempAlien;
+    Alien tempAlien2;
+    Music music;
+    Ufo bonusAlien;
+    ArrayList<Shield> shields = new ArrayList<Shield>();
+    PowerUp power;
+    Sound alienDeath;
+    Sound playerDeath;
+    Sound bossDeath;
+    Boss boss;
+
+
+    BitmapFont font;
+    int score = 0;
+    int lives = 3;
+    int playerCooldown = 60;
+    int respawnTimer = 0;
+    int invinTimer = 0;
+    int level = 1;
+    int maxBullets = 1;
+    int laserTimer = 0;
+
+    public void create() {
+        this.setScreen(new MainMenuScreen(this));
+        batch = new SpriteBatch();
+        screenX = Gdx.graphics.getWidth();  //setting variables for easy acces to screen dimensions
+        screenY = Gdx.graphics.getHeight();
+        font = new BitmapFont();   //declaring font for later text drawing
+        font.getData().setScale(2f);
+
+        for(int x = 0; x < 10; x++) { //creating a starting 10 by 5 swarm of enemy aliens
+            for(int y = 0; y < 5; y++) {
+                Alien tempAlien = new Alien(x * 40, screenY - y * 30 - 55, 4 - y);
+                swarm.add(tempAlien);
+            }
+        }
+        //Declaring individual sounds for different deaths
+        playerDeath = Gdx.audio.newSound(Gdx.files.internal("playerDeath.wav"));
+        alienDeath = Gdx.audio.newSound(Gdx.files.internal("alienDeath.wav"));
+        bossDeath = Gdx.audio.newSound(Gdx.files.internal("bossDeath.wav"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("ArcadeLoop.mp3"));
+        //playing background music
+        music.play();
+        music.setLooping(true);
+
+        player = new PlayerShip(); //Creating the first instance of the player controlled ship
+        for(int i = 0; i < 3; i++) { //Creating 3 bullet blocking shields for the player to hide under
+            Shield tempShield = new Shield(70 + i * 200, 80);
+            shields.add(tempShield);
+        }
+
+
+    }
+
+
+
+
+
+
+    @Override
+    public void render() {
+        super.render();
+    }
+
+    public void dispose() {
+        batch.dispose();
+        font.dispose();
+    }
+
 }
